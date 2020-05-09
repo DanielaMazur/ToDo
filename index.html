@@ -1,16 +1,33 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <link
+      href="https://cdn.muicss.com/mui-latest/css/mui.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <script src="https://cdn.muicss.com/mui-latest/js/mui.min.js"></script>
     <title>TODO</title>
 
     <link rel="stylesheet" type="text/css" href="style.css" />
   </head>
   <body>
     <div class="todoContainer">
-      <div>
-        <input id="todoInput" />
-        <button id="addTaskBtn">Add Task</button>
+      <div class="form">
+        <div class="mui-textfield">
+          <input id="titleInput" placeholder="Task's title" />
+        </div>
+        <div class="mui-textfield">
+          <textarea
+            id="descriptionInput"
+            placeholder="Task's description"
+          ></textarea>
+        </div>
+        <button class="mui-btn mui-btn--primary" id="addTaskBtn">
+          Add Task
+        </button>
       </div>
+
       <div id="tasksContainer"></div>
     </div>
   </body>

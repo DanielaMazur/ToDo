@@ -4,6 +4,13 @@ export const addBtn = (type, cardId, onClickFunction) => {
 
   button.innerHTML = type;
   button.id = `${type}-${cardId}`;
+
+  if (type === "delete" || type === "cancel") {
+    button.className = "mui-btn mui-btn--danger";
+  } else {
+    button.className = "mui-btn mui-btn--accent";
+  }
+
   button.addEventListener("click", () => onClickFunction(cardId));
 
   card.appendChild(button);

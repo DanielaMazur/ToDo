@@ -1,72 +1,79 @@
 import { addBtn, createTaskParagraph } from "./modules/create-elements.js";
 
-let tasks = [];
+let todos = [];
 
 const deleteElementById = (id) => {
   const elementToBeDeleted = document.getElementById(id);
-
   elementToBeDeleted.remove();
 };
-const cancelEdit = (id) => {
-  const editInput = document.getElementById(`edit-input-${id}`);
-  editInput.remove();
 
-  createTaskParagraph(id, tasks[id]);
+const cancelEdit = (id) => {
+  deleteElementById(`edit-title-${id}`);
+  deleteElementById(`edit-description-${id}`);
+
+  createTaskParagraph(id, todos[id].description);
+  createTaskParagraph(id, todos[id].title);
 
   turnOffEditMode(id);
 };
 
 const editTask = (id) => {
   const taskCard = document.getElementById(id);
-  const taskText = document.getElementById(`task-${id}`);
-  taskText.remove();
 
-  const editInput = document.createElement("input");
-  editInput.id = `edit-input-${id}`;
-  editInput.value = tasks[id];
+  //delete all paragraphs in order to replace them with inputs
+  while (document.getElementById(`task-${id}`)) {
+    deleteElementById(`task-${id}`);
+  }
+
+  const editTitle = document.createElement("input");
+  editTitle.id = `edit-title-${id}`;
+  editTitle.value = todos[id].title;
+
+  const editDescriptionTextarea = document.createElement("textarea");
+  editDescriptionTextarea.id = `edit-description-${id}`;
+  editDescriptionTextarea.className = "mui-textfield";
+  editDescriptionTextarea.value = todos[id].description;
+
   //prepend - append first child
-  taskCard.prepend(editInput);
+  taskCard.prepend(editDescriptionTextarea);
+  taskCard.prepend(editTitle);
 
-  const deleteBtn = document.getElementById(`delete-${id}`);
-  deleteBtn.remove();
-
-  const editBtn = document.getElementById(`edit-${id}`);
-  editBtn.remove();
+  deleteElementById(`delete-${id}`);
+  deleteElementById(`edit-${id}`);
 
   addBtn("cancel", id, cancelEdit);
   addBtn("apply", id, applyChanges);
 };
 
 const deleteTask = (id) => {
-  //remove task from tasks array
-  tasks.splice(id, 1);
-
-  //remove task's card from dom
-  const card = document.getElementById(id);
-  card.remove();
+  todos.splice(id, 1);
+  deleteElementById(id);
 };
 
 const applyChanges = (id) => {
-  const editInput = document.getElementById(`edit-input-${id}`);
-  const editedText = editInput.value;
+  const title = document.getElementById(`edit-title-${id}`).value;
+  const description = document.getElementById(`edit-description-${id}`).value;
 
-  if (editedText === tasks[id]) {
+  if (title === todos[id].title && description === todos[id].description) {
     cancelEdit(id);
     return;
   }
 
-  createTaskParagraph(id, editedText);
-  editInput.remove();
+  deleteElementById(`edit-title-${id}`);
+  deleteElementById(`edit-description-${id}`);
+
+  createTaskParagraph(id, description);
+  todos[id].description = description;
+
+  createTaskParagraph(id, title);
+  todos[id].title = title;
 
   turnOffEditMode(id);
 };
 
 const turnOffEditMode = (id) => {
-  const cancelBtn = document.getElementById(`cancel-${id}`);
-  cancelBtn.remove();
-
-  const applyBtn = document.getElementById(`apply-${id}`);
-  applyBtn.remove();
+  deleteElementById(`cancel-${id}`);
+  deleteElementById(`apply-${id}`);
 
   addBtn("delete", id, deleteTask);
   addBtn("edit", id, editTask);
@@ -74,35 +81,42 @@ const turnOffEditMode = (id) => {
 
 const addTask = () => {
   //get the value written in todo input
-  const newTask = document.getElementById("todoInput").value;
+  const titleElement = document.getElementById("titleInput");
+  const taskDescriptionElement = document.getElementById("descriptionInput");
+
+  const [title, description] = [
+    titleElement.value,
+    taskDescriptionElement.value,
+  ];
 
   //clear input
-  document.getElementById("todoInput").value = "";
+  titleElement.value = "";
+  taskDescriptionElement.value = "";
 
-  if (tasks.includes(newTask)) {
+  const alreadyExists = todos.some((todo) => todo.title === title);
+  if (alreadyExists) {
     alert("this task already exists");
     return;
   }
-  if (newTask === "") {
+  if (title === "") {
     alert("task can not be empty string");
     return;
   }
 
-  tasks.push(newTask);
+  todos.push({ title, description });
 
-  const taskId = tasks.indexOf(newTask);
+  const taskId = todos.findIndex((todo) => todo.title === title);
 
   // create card element
   const card = document.createElement("div");
   card.id = taskId;
-  card.className = "card";
+  card.className = "card mui-panel";
 
-  //append our task to tasks container element
   const container = document.getElementById("tasksContainer");
   container.appendChild(card);
 
-  //create a paragraph which will contain task description and append it to card element
-  createTaskParagraph(taskId, newTask);
+  createTaskParagraph(taskId, description);
+  createTaskParagraph(taskId, title);
 
   //create delete button and append it to card element
   addBtn("delete", taskId, deleteTask);
@@ -111,5 +125,5 @@ const addTask = () => {
   addBtn("edit", taskId, editTask);
 };
 
-const addTaskBtn = document.getElementById("addTaskBtn");
+const addTaskBtn = document.querySelector("#addTaskBtn");
 addTaskBtn.addEventListener("click", () => addTask());
