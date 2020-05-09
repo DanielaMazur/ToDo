@@ -16,10 +16,13 @@ export const addBtn = (type, cardId, onClickFunction) => {
   card.appendChild(button);
 };
 
-export const createTaskParagraph = (cardId, text) => {
+export const createTaskParagraph = (cardId, text, classes = undefined) => {
   const card = document.getElementById(cardId);
 
   const taskText = document.createElement("p");
+  if (classes) {
+    taskText.className = classes;
+  }
   taskText.id = `task-${cardId}`;
   taskText.innerHTML = text;
   card.prepend(taskText);

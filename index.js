@@ -1,4 +1,7 @@
-import { addBtn, createTaskParagraph } from "./modules/create-elements.js";
+import {
+  addBtn,
+  createTaskParagraph,
+} from "./helper-function/create-elements.js";
 
 let todos = [];
 
@@ -116,7 +119,7 @@ const addTask = () => {
   container.appendChild(card);
 
   createTaskParagraph(taskId, description);
-  createTaskParagraph(taskId, title);
+  createTaskParagraph(taskId, title, "bold");
 
   //create delete button and append it to card element
   addBtn("delete", taskId, deleteTask);
